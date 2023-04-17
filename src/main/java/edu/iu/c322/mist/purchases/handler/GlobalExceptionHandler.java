@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -26,6 +27,11 @@ public class GlobalExceptionHandler {
         String errorMessages = exception.getConstraintViolations().stream().map(error -> error.getMessage())
                 .collect(java.util.stream.Collectors.joining(", "));
         return ResponseEntity.badRequest().body(errorMessages);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<?> handleException(ResponseStatusException exception){
+        return ResponseEntity.status(exception.getStatusCode()).body(exception.getMessage());
     }
 
 
